@@ -1,0 +1,155 @@
+[tbl_subjects]
+SubjectID 		// Subject Code
+Description		// Complete Subject Description | ex. General Program Elective 2 w/ Laboratory
+ShortName		// C#
+
+[tbl_courses]
+CourseID 		// Abbreviation
+Description		// Bachelor of Science in Etc.
+CollegeID		// [FK: tbl_colleges]
+Status			// 
+
+[tbl_colleges]
+CollegeID		// Abbreviation
+Description
+Chairperson
+Status			// 
+SecretaryID		// nullable since pwedeng walang secretary.
+
+[tbl_users]
+UserID			// FacultyID?
+Username
+Password
+LastName
+FirstName
+MiddleName
+DateOfBirth
+Gender
+Address
+ContactNumber
+EmailAddress
+UserLevel		// can be enum [S = Secreatary | F = Faculty | C = Chairperson/College Dean | A = Administrator]
+
+[tbl_topics]	// topics under a certain subject ~ TID-ELECL1C-1001
+TopicID
+Title			// As in topic title ito. Kumbaga sa subject na Programming 2, Classes
+SubjectID		// [FK: tbl_subjects]
+GradingPeriod	// Enum [P=Prelim|M=Midterm|F=Finals]
+
+[tbl_exams]
+ExamID			// EX-1314-1-P-ELECL1C-10001
+SubjectID		// Subject Code
+ExamType		// Regular | Departmental 
+TopicList		// TopicID List, ignores GradingPeriod Conflict on Exam and Topic.
+GradingPeriod	//
+Privacy
+DateCreated
+CreatedBy
+LastModified	// nullable
+LastModifiedBy	// nullable
+Status
+
+[tbl_questions]
+QuestionID		// QNID-{SBJID}-{USRID}-1000
+Type			// I-Identification | M=Multiple Choice
+Question		// the actual question
+A				// the answer for letter a	~ required
+B				// the answer for letter b	~ required if multiple choice, not if identification 
+C				// the answer for letter c	~ nullable
+D				// the answer for letter d	~ nullable
+E				// the answer for letter e	~ nullable
+Answer			// the letter of the correct answer
+TopicList		// IDs of topics associated with the certain question
+Privacy
+DateCreated
+CreatedBy
+LastModified	// nullable
+LastModifiedBy	// nullable
+Status
+
+[tbl_examquestions]
+ExamQuestionID	// 35-A-99
+ExamID			// ExamID + Set [A|B|C|D]
+ExamSet*		// To-be-Reconsidered. Parang ndi na kelangan neto.
+QuestionID
+Sequence
+
+[tbl_events]
+EventID			// EVT-S-2013-14-1001
+Description
+EventDate
+Notification	// 1=on | 0=off ~ Rule: Default Event entries found in the calendar would have no notification. Events made by chairs regarding submission of exams and events as set by the user himself can have an optional notifcation.
+NotifyTime		// DateTime | Defaulted @ 00:00:00 (Event Off)
+EventType		// Enum [U=University Calendar|C=Chairperson-set Event (Deadlines for submission)|P=Personal Events by user]
+CreatedBy
+
+[tbl_userlogs]
+SessionID
+UserID
+LoginTime
+LogoutTime
+
+[tbl_actionlogs]
+ActionLogID		// AutoNumber
+UserID			// 
+LogTime			// DT
+Module			// Part of the system. Subject for Updates.
+Action			// [I=INSERT|U=UPDATE|D=DELETE]
+Table			// Affected Table -- June 6,2015
+AffectedID		// The ID of the Object that was involved.
+
+[tbl_submissions]
+SubmissionID	// can be an autonumber field or a specific one. SM-1213-P-10001
+FacultyLoadID	// andito na lahat eh.
+ExamID			// may checking if the specified exam id's subject matched with tbl_submission's subject id.
+GradingPeriod	// PMF
+
+[tbl_facultyload]
+FacultyLoadID	// FLID-1000000
+FacultyID
+SubjectID
+Semester
+AcademicYear
+
+[tbl_config]
+ConfKey
+ConfValue
+
+- AcademicYear:	
+- DatabaseHost:
+- DatabaseUser:
+- DatabasePass:
+- DatabaseName:
+- ActionLogging: On|Off
+
+[tbl_academicyears]
+AcademicYearID	// ex. AY201314
+Description		// AY 2013-2014
+Current			// [1=true|0=false]
+
+
+[tbl_memo]	// pwedeng i delete ito? TBR.
+MemoID			// MMID-1314-1-1001
+SourceID		// Dean's Office or Chaiperson lang naman siguro muna dito. pag expand ng system, ska na isama ung iba.
+TargetID		// eto CollegeID. 
+Subject
+Description
+CreatorID
+DatePosted
+
+[tbl_itempoints] [oct 8, 2013]
+ID			// autonumber
+ItemType	// Question | Exam
+ItemID		// QuestionID | ExamID
+DateUsed	// 
+
+
+
+
+//--- Reopen June 6, 2015 ---
+[Logic]
+Exam is to be created as is.
+Item topic/category after exam is created.
+Each question has an edit function in [Review Mode] to be able to create changes if there are any.
+[Review Mode] is when you review an item in the exam, and to categorize it.
+Category/Topic is assigned to each question in order for it to be reusable.

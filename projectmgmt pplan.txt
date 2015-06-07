@@ -1,0 +1,140 @@
+[[[PMS]]]
+Entities:
+- projects
+	. id
+	. name
+	. methodology
+	. type
+	. startdate
+	. enddate
+	. managerid
+	. team
+	. status
+- teams
+	. id
+	. name
+	. lead
+	. poc
+	. status
+- developers
+	. id
+	. name
+	. level
+	. role
+	. email
+	. contact
+	. status
+- levels
+	. id
+	. level
+	. description
+- roles
+	. id
+	. description
+- documents
+	. id 											(autonumber)
+	. project										(project id)
+	. module										(module id)
+	. functional design								
+	. technical design
+	. unit test
+- modules 											(development modules / sub-system as task)
+	. moduleid
+	. assignedto 									(userid id)
+	. priority
+	. complexity									[ very simple, simple, medium, complex, very complex ]
+	. description
+	. createdby										(user id)
+	. status
+- devlogs 											(development logs)
+	. id 											(autonumber) [1]
+	. module										(module id)
+	. logtype										[ FUT, SIT, ISSUE ]
+	. by											(logged by: userid)
+	. timelogged
+	. status 										[ pending, assigned, ongoing, on hold, completed ]
+	
+
+Functions
+- projects
+	. view
+	. add
+	. update
+	. complete
+- teams
+	. view
+	. create
+	. modify
+- devs
+	. view
+	. add
+	. update
+- levels (pre-set)
+- documents
+	. view
+	. upload
+	. search
+	
+	
+Notes:
+1. Hidden from view.
+
+
+Navigation:
+/user/
+/user/create/
+/user/update/
+
+/project/
+/project/create/
+/project/update/
+
+/module/
+/module/create/
+/module/modify/
+/module/progress/
+
+/team/
+/team/create/
+/team/update/
+/team/assign/
+
+
+/document/											<- by default has search
+/document/search/~ 									<- advanced search
+/document/upload/
+
+
+/devlogs/                                           <- by default has search
+/devlogs/search/~									<- advanced search
+/devlogs/new/
+
+
+
+
+
+
+
+
+
+
+
+Retail Issue Logs
+- Key Area
+- Client
+- Title
+- Description
+- Priority
+- Status
+- Date Identified
+- Assigned to
+- ETC.
+- Next Review Date
+- Due Date
+Finance Issue Logs
+Retail Risk Logs
+Finance Risk Logs
+Dev. Issue Logs
+Daily Time Tracker
+
+Calendar

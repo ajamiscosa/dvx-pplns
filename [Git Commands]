@@ -1,0 +1,8 @@
+[Git Commands]
+git init
+git remote add origin https://github.com/devfinity/test.git
+git remote -v
+git add .
+git status
+git commit -m 'Message Here'
+git push origin master
