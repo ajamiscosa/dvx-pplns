@@ -153,3 +153,11 @@ Item topic/category after exam is created.
 Each question has an edit function in [Review Mode] to be able to create changes if there are any.
 [Review Mode] is when you review an item in the exam, and to categorize it.
 Category/Topic is assigned to each question in order for it to be reusable.
+
+[tbl_exam] mods
+- Exam coordinator / contributor
+- Creator can tag other instructors as contributor to the created exam.
+
+~ Field mods
+-> Creator 				- ID of Creator
+-> Contributors			- ID(s) of contributors. Separated by semicolon.
