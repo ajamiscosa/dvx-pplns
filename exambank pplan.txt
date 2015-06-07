@@ -44,7 +44,8 @@ TopicList		// TopicID List, ignores GradingPeriod Conflict on Exam and Topic.
 GradingPeriod	//
 Privacy
 DateCreated
-CreatedBy
+CreatedBy	
+Contributors 	// - June 7, 2015. Added for flexibility.
 LastModified	// nullable
 LastModifiedBy	// nullable
 Status
