@@ -18,8 +18,9 @@ SecretaryID		// nullable since pwedeng walang secretary.
 
 [tbl_users]
 UserID			// FacultyID?
-Username
-Password
+Email			// firstname.middleinitial.surname@server.com :: ~updated June 9, 2015
+Password		// bcrypt-ed. use bcrypt when registering new users. :: ~updated June 9, 2015
+AccessLevel		// can be enum [S = Secreatary | F = Faculty | C = Chairperson/College Dean | A = Administrator]
 LastName
 FirstName
 MiddleName
@@ -27,8 +28,6 @@ DateOfBirth
 Gender
 Address
 ContactNumber
-EmailAddress
-UserLevel		// can be enum [S = Secreatary | F = Faculty | C = Chairperson/College Dean | A = Administrator]
 
 [tbl_topics]	// topics under a certain subject ~ TID-ELECL1C-1001
 TopicID
@@ -41,13 +40,13 @@ ExamID			// EX-1314-1-P-ELECL1C-10001
 SubjectID		// Subject Code
 ExamType		// Regular | Departmental 
 TopicList		// TopicID List, ignores GradingPeriod Conflict on Exam and Topic.
-GradingPeriod	//
+GradingPeriod	// P - Prelim | M - Midterm | F - Finals :: Updated ~June 9, 2015
 Privacy
 DateCreated
 CreatedBy	
 Contributors 	// - June 7, 2015. Added for flexibility.
 LastModified	// nullable
-LastModifiedBy	// nullable
+LastModifiedBy	// nullable -- only those listed on Contributors can modify. Everybody else can only view and copy. :: ~Updated June 9, 2015
 Status
 
 [tbl_questions]
@@ -71,9 +70,18 @@ Status
 [tbl_examquestions]
 ExamQuestionID	// 35-A-99
 ExamID			// ExamID + Set [A|B|C|D]
+ExamPart		// Roman Numerals - I II III IV V etc.
 ExamSet*		// To-be-Reconsidered. Parang ndi na kelangan neto.
 QuestionID
 Sequence
+
+/* Created June 9, 2015 */
+[tbl_examparts]		// I. Multiple Choice. Etc. 
+ExamPartID		// ExamID-Part. ex. EX-1314-1-P-ELECL1C-10001-I
+HeaderText		// The text displayed after the roman numeral.
+PointsPerItem		// How many points this item is equivalent.
+TotalItems		// # of items in the part
+TotalPoints		// Total points. Items * Points / Item
 
 [tbl_events]
 EventID			// EVT-S-2013-14-1001
@@ -129,14 +137,21 @@ Description		// AY 2013-2014
 Current			// [1=true|0=false]
 
 
-[tbl_memo]	// pwedeng i delete ito? TBR.
+[tbl_memo]		// Memo/Mail. :: ~updated June 9, 2015 | would not be limited to memos. Official / Unofficial mailing system.
 MemoID			// MMID-1314-1-1001
-SourceID		// Dean's Office or Chaiperson lang naman siguro muna dito. pag expand ng system, ska na isama ung iba.
-TargetID		// eto CollegeID. 
-Subject
-Description
+SenderID		// EID ng nagsend. pag system ang nag send, mailer@lpu.edu.ph
+ReceiverID		// eto CollegeID. 
+Subject			// Header
+Description		
+MessageType		// R - Regular Message | S - System Message (Notification for Submission/Memo/Deadline)
 CreatorID
 DatePosted
+/**
+ *
+ * if(User::auth()->getLevel()>(User.Faculty||User.Secretary))
+ * -> Display additional field for Message Type.
+ *
+ */
 
 [tbl_itempoints] [oct 8, 2013]
 ID			// autonumber
@@ -162,3 +177,21 @@ Category/Topic is assigned to each question in order for it to be reusable.
 ~ Field mods
 -> Creator 				- ID of Creator
 -> Contributors			- ID(s) of contributors. Separated by semicolon.
+
+
+[Mailer Logic]
+On System Generated Messages Regarding Exam Submission.
+- Identify subjects that are being handled by 3 or more instructors and recommend as Departmental Exam.
+Example:
+
+<Mail Content containing deadline. etc.>
+
+The following subjects are recommended to conduct departmental Examinations:
+ELECL1C - General Program Elective 2 w/ Laboratory 1	[ Amiscosa, Cortez, Porto ]
+ITFL01G - IT Fundamentals				[ Matel, Peren, Cortez, Aquines ]
+ELFRN3C - General Elective 2 (Advanced Web)		[ Amiscosa, Dy, Doctor ]
+
+Should you have any concerns regarding the departmental examinations, please send an email to {{ College::chairperson()->Email }}.
+
+
+- This is a system generated mail. Do not reply. -
