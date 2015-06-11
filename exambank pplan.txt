@@ -53,14 +53,15 @@ Status
 QuestionID		// QNID-{SBJID}-{USRID}-1000
 Type			// I-Identification | M=Multiple Choice
 Question		// the actual question
-A				// the answer for letter a	~ required
+A				// the answer for letter a	~ required I | M. E -> Provide hint for the essay answer. ~ June 11, 2015
 B				// the answer for letter b	~ required if multiple choice, not if identification 
 C				// the answer for letter c	~ nullable
 D				// the answer for letter d	~ nullable
 E				// the answer for letter e	~ nullable
 Answer			// the letter of the correct answer
 TopicList		// IDs of topics associated with the certain question
-Privacy
+Privacy			// O = Public | C = Private
+Privacy			// O = Public | C = Private
 DateCreated
 CreatedBy
 LastModified	// nullable
@@ -153,7 +154,24 @@ DatePosted
  *
  */
 
-[tbl_itempoints] [oct 8, 2013]
+[tbl_distgroups]		// ~Created June 11, 2015 :: should we make an outlook-like app for this?
+DistGroupID		// Dist-0001 ~ Think about this even more.
+Name			// LPU.etc Refer to enrollment ppln.
+OwnerID			// Creator / Overall owner of the DistGroup.
+$table->timestamps();
+
+[tbl_memberships]		// membership in distribution groups.
+MembershipID		// autonumber. yeah.
+DistGroupID		
+UserID			
+/**
+ * Rule:
+ * When a note / message is sent to a distribution group,
+ * its like you CC the whole thing.
+ */
+
+
+[tbl_itempoints] [oct 8, 2013]   // This is used for statistics, right?
 ID			// autonumber
 ItemType	// Question | Exam
 ItemID		// QuestionID | ExamID
