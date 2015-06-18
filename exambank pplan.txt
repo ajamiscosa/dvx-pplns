@@ -36,21 +36,22 @@ SubjectID		// [FK: tbl_subjects]
 GradingPeriod	// Enum [P=Prelim|M=Midterm|F=Finals]
 
 [tbl_exams]
-ExamID			// EX-1314-1-P-ELECL1C-10001
+ExamID			// EXA14A1001
 SubjectID		// Subject Code
 ExamType		// Regular | Departmental 
-TopicList		// TopicID List, ignores GradingPeriod Conflict on Exam and Topic.
+/*TopicList*/	// TopicID List, ignores GradingPeriod Conflict on Exam and Topic. separate table.
 GradingPeriod	// P - Prelim | M - Midterm | F - Finals :: Updated ~June 9, 2015
+ExamSet 		// Default: A // ~Update June 12, 2015
 Privacy
 DateCreated
 CreatedBy	
-Contributors 	// - June 7, 2015. Added for flexibility.
+/*Contributors*/// - June 7, 2015. Added for flexibility. Separate table.
 LastModified	// nullable
 LastModifiedBy	// nullable -- only those listed on Contributors can modify. Everybody else can only view and copy. :: ~Updated June 9, 2015
 Status
 
 [tbl_questions]
-QuestionID		// QNID-{SBJID}-{USRID}-1000
+QuestionID		// QNA14-100000
 Type			// I-Identification | M=Multiple Choice
 Question		// the actual question
 A				// the answer for letter a	~ required I | M. E -> Provide hint for the essay answer. ~ June 11, 2015
@@ -70,28 +71,50 @@ Status
 
 [tbl_examquestions]
 ExamQuestionID	// 35-A-99
-ExamID			// ExamID + Set [A|B|C|D]
-ExamPart		// Roman Numerals - I II III IV V etc.
-ExamSet*		// To-be-Reconsidered. Parang ndi na kelangan neto.
+ExamPartID		// ExamID + Set [A|B|C|D]
 QuestionID
 Sequence
 
+[tbl_questiontopics]
+ID 				// autonum
+QuestionID 		// fk
+TopicID			// fk
+
+[tbl_examtopics]
+ID 				// autonum
+ExamID
+TopicID
+
+
 /* Created June 9, 2015 */
 [tbl_examparts]		// I. Multiple Choice. Etc. 
-ExamPartID		// ExamID-Part. ex. EX-1314-1-P-ELECL1C-10001-I
+ExamPartID		// autonum
+ExamID
+Part
 HeaderText		// The text displayed after the roman numeral.
 PointsPerItem		// How many points this item is equivalent.
 TotalItems		// # of items in the part
 TotalPoints		// Total points. Items * Points / Item
+/**
+ * For flexibility, [+/-] To increase or decrease the current # of items in the exam part. and to reassign it to another.
+ * Display the overlapping or lacking # of items if the # of items on a part has been modified.
+ */
+
+[tbl_academicyears]
+AcademicYearID	// AY201415
+ShortText		// AY 2014-2015
 
 [tbl_events]
 EventID			// EVT-S-2013-14-1001
+Title 			// title ng event~
 Description
+AcademicYearID 	//
+Semester
 EventDate
 Notification	// 1=on | 0=off ~ Rule: Default Event entries found in the calendar would have no notification. Events made by chairs regarding submission of exams and events as set by the user himself can have an optional notifcation.
 NotifyTime		// DateTime | Defaulted @ 00:00:00 (Event Off)
 EventType		// Enum [U=University Calendar|C=Chairperson-set Event (Deadlines for submission)|P=Personal Events by user]
-CreatedBy
+CreatedBy		
 
 [tbl_userlogs]
 SessionID
@@ -139,20 +162,53 @@ Current			// [1=true|0=false]
 
 
 [tbl_memo]		// Memo/Mail. :: ~updated June 9, 2015 | would not be limited to memos. Official / Unofficial mailing system.
-MemoID			// MMID-1314-1-1001
+MessageID		// PK, autonumber.
+MemoID			// MMID-1314-1-1001 or -
 SenderID		// EID ng nagsend. pag system ang nag send, mailer@lpu.edu.ph
-ReceiverID		// eto CollegeID. 
+/*ReceiverID*/	// kanino sinend. pwedeng marami ito. ibahin ng table.
 Subject			// Header
 Description		
 MessageType		// R - Regular Message | S - System Message (Notification for Submission/Memo/Deadline)
+Label			// E - Exam, U - University, C - College
 CreatorID
-DatePosted
+Status			// S - Sent | D - Draft | 
+/**
+ * So, sa tbl_memo nakalagay ung mga created na messages. tapos pag send, insert into tbl_mailbox, iterate receivers.
+ *
+ *
+ **/
+$table->timestamps();
 /**
  *
  * if(User::auth()->getLevel()>(User.Faculty||User.Secretary))
  * -> Display additional field for Message Type.
  *
  */
+[tbl_recipients] june 16
+RecipientID		// autonumber
+MessageID		// fk
+EmailAddress	// individual mail receipient.
+
+
+
+[tbl_mailbox]
+MailID			// autonumber
+MessageID		// FK.
+Read 			// boolean
+Starred 		// boolean
+Flag			// email flags.
+Label 			// parang category. I - Important | C - College
+Status 			// N - Normal | J - Junked | T - Trashed | R - Removed (Totally)
+
+[tbl_attachments]
+AttachmentID	// autonumber
+MemoID			//
+FileName		// 
+FilePath		// path, serverside. kung san naka save.
+FileType		// docx txt pdf jpg png bmp
+Size			// in bytes
+
+
 
 [tbl_distgroups]		// ~Created June 11, 2015 :: should we make an outlook-like app for this?
 DistGroupID		// Dist-0001 ~ Think about this even more.
