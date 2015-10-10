@@ -1,0 +1,271 @@
+[tbl_subjects]
+SubjectID 		// Subject Code
+Description		// Complete Subject Description | ex. General Program Elective 2 w/ Laboratory
+ShortName		// C#
+
+[tbl_courses]
+CourseID 		// Abbreviation
+Description		// Bachelor of Science in Etc.
+CollegeID		// [FK: tbl_colleges]
+Status			// 
+
+[tbl_colleges]
+CollegeID		// Abbreviation
+Description
+Chairperson
+Status			// 
+SecretaryID		// nullable since pwedeng walang secretary.
+
+[tbl_users]
+UserID			// FacultyID?
+Email			// firstname.middleinitial.surname@server.com :: ~updated June 9, 2015
+Password		// bcrypt-ed. use bcrypt when registering new users. :: ~updated June 9, 2015
+AccessLevel		// can be enum [S = Secreatary | F = Faculty | C = Chairperson/College Dean | A = Administrator]
+LastName
+FirstName
+MiddleName
+DateOfBirth
+Gender
+Address
+ContactNumber
+
+[tbl_topics]	// topics under a certain subject ~ TID-ELECL1C-1001
+TopicID
+Title			// As in topic title ito. Kumbaga sa subject na Programming 2, Classes
+SubjectID		// [FK: tbl_subjects]
+GradingPeriod	// Enum [P=Prelim|M=Midterm|F=Finals]
+
+[tbl_exams]
+ExamID			// EXA14A1001
+SubjectID		// Subject Code
+ExamType		// Regular | Departmental 
+/*TopicList*/	// TopicID List, ignores GradingPeriod Conflict on Exam and Topic. separate table.
+GradingPeriod	// P - Prelim | M - Midterm | F - Finals :: Updated ~June 9, 2015
+ExamSet 		// Default: A // ~Update June 12, 2015
+Privacy
+DateCreated
+CreatedBy	
+/*Contributors*/// - June 7, 2015. Added for flexibility. Separate table.
+LastModified	// nullable
+LastModifiedBy	// nullable -- only those listed on Contributors can modify. Everybody else can only view and copy. :: ~Updated June 9, 2015
+Status
+
+[tbl_questions]
+QuestionID		// QNA14-100000
+Type			// I-Identification | M=Multiple Choice
+Question		// the actual question
+A				// the answer for letter a	~ required I | M. E -> Provide hint for the essay answer. ~ June 11, 2015
+B				// the answer for letter b	~ required if multiple choice, not if identification 
+C				// the answer for letter c	~ nullable
+D				// the answer for letter d	~ nullable
+E				// the answer for letter e	~ nullable
+Answer			// the letter of the correct answer
+TopicList		// IDs of topics associated with the certain question
+Privacy			// O = Public | C = Private
+Privacy			// O = Public | C = Private
+DateCreated
+CreatedBy
+LastModified	// nullable
+LastModifiedBy	// nullable
+Status
+
+[tbl_examquestions]
+ExamQuestionID	// 35-A-99
+ExamPartID		// ExamID + Set [A|B|C|D]
+QuestionID
+Sequence
+
+[tbl_questiontopics]
+ID 				// autonum
+QuestionID 		// fk
+TopicID			// fk
+
+[tbl_examtopics]
+ID 				// autonum
+ExamID
+TopicID
+
+
+/* Created June 9, 2015 */
+[tbl_examparts]		// I. Multiple Choice. Etc. 
+ExamPartID		// autonum
+ExamID
+Part
+HeaderText		// The text displayed after the roman numeral.
+PointsPerItem		// How many points this item is equivalent.
+TotalItems		// # of items in the part
+TotalPoints		// Total points. Items * Points / Item
+/**
+ * For flexibility, [+/-] To increase or decrease the current # of items in the exam part. and to reassign it to another.
+ * Display the overlapping or lacking # of items if the # of items on a part has been modified.
+ */
+
+[tbl_academicyears]
+AcademicYearID	// AY201415
+ShortText		// AY 2014-2015
+
+[tbl_events]
+EventID			// EVT-S-2013-14-1001
+Title 			// title ng event~
+Description
+AcademicYearID 	//
+Semester
+EventDate
+Notification	// 1=on | 0=off ~ Rule: Default Event entries found in the calendar would have no notification. Events made by chairs regarding submission of exams and events as set by the user himself can have an optional notifcation.
+NotifyTime		// DateTime | Defaulted @ 00:00:00 (Event Off)
+EventType		// Enum [U=University Calendar|C=Chairperson-set Event (Deadlines for submission)|P=Personal Events by user]
+CreatedBy		
+
+[tbl_userlogs]
+SessionID
+UserID
+LoginTime
+LogoutTime
+
+[tbl_actionlogs]
+ActionLogID		// AutoNumber
+UserID			// 
+LogTime			// DT
+Module			// Part of the system. Subject for Updates.
+Action			// [I=INSERT|U=UPDATE|D=DELETE]
+Table			// Affected Table -- June 6,2015
+AffectedID		// The ID of the Object that was involved.
+
+[tbl_submissions]
+SubmissionID	// can be an autonumber field or a specific one. SM-1213-P-10001
+FacultyLoadID	// andito na lahat eh.
+ExamID			// may checking if the specified exam id's subject matched with tbl_submission's subject id.
+GradingPeriod	// PMF
+
+[tbl_facultyload]
+FacultyLoadID	// FLID-1000000
+FacultyID
+SubjectID
+Semester
+AcademicYear
+
+[tbl_config]
+ConfKey
+ConfValue
+
+- AcademicYear:	
+- DatabaseHost:
+- DatabaseUser:
+- DatabasePass:
+- DatabaseName:
+- ActionLogging: On|Off
+
+[tbl_academicyears]
+AcademicYearID	// ex. AY201314
+Description		// AY 2013-2014
+Current			// [1=true|0=false]
+
+
+[tbl_memo]		// Memo/Mail. :: ~updated June 9, 2015 | would not be limited to memos. Official / Unofficial mailing system.
+MessageID		// PK, autonumber.
+MemoID			// MMID-1314-1-1001 or -
+SenderID		// EID ng nagsend. pag system ang nag send, mailer@lpu.edu.ph
+/*ReceiverID*/	// kanino sinend. pwedeng marami ito. ibahin ng table.
+Subject			// Header
+Description		
+MessageType		// R - Regular Message | S - System Message (Notification for Submission/Memo/Deadline)
+Label			// E - Exam, U - University, C - College
+CreatorID
+Status			// S - Sent | D - Draft | 
+/**
+ * So, sa tbl_memo nakalagay ung mga created na messages. tapos pag send, insert into tbl_mailbox, iterate receivers.
+ *
+ *
+ **/
+$table->timestamps();
+/**
+ *
+ * if(User::auth()->getLevel()>(User.Faculty||User.Secretary))
+ * -> Display additional field for Message Type.
+ *
+ */
+[tbl_recipients] june 16
+RecipientID		// autonumber
+MessageID		// fk
+EmailAddress	// individual mail receipient.
+
+
+
+[tbl_mailbox]
+MailID			// autonumber
+MessageID		// FK.
+Read 			// boolean
+Starred 		// boolean
+Flag			// email flags.
+Label 			// parang category. I - Important | C - College
+Status 			// N - Normal | J - Junked | T - Trashed | R - Removed (Totally)
+
+[tbl_attachments]
+AttachmentID	// autonumber
+MemoID			//
+FileName		// 
+FilePath		// path, serverside. kung san naka save.
+FileType		// docx txt pdf jpg png bmp
+Size			// in bytes
+
+
+
+[tbl_distgroups]		// ~Created June 11, 2015 :: should we make an outlook-like app for this?
+DistGroupID		// Dist-0001 ~ Think about this even more.
+Name			// LPU.etc Refer to enrollment ppln.
+OwnerID			// Creator / Overall owner of the DistGroup.
+$table->timestamps();
+
+[tbl_memberships]		// membership in distribution groups.
+MembershipID		// autonumber. yeah.
+DistGroupID		
+UserID			
+/**
+ * Rule:
+ * When a note / message is sent to a distribution group,
+ * its like you CC the whole thing.
+ */
+
+
+[tbl_itempoints] [oct 8, 2013]   // This is used for statistics, right?
+ID			// autonumber
+ItemType	// Question | Exam
+ItemID		// QuestionID | ExamID
+DateUsed	// 
+
+
+
+
+//--- Reopen June 6, 2015 ---
+[Logic]
+Exam is to be created as is.
+Item topic/category after exam is created.
+Each question has an edit function in [Review Mode] to be able to create changes if there are any.
+[Review Mode] is when you review an item in the exam, and to categorize it.
+Category/Topic is assigned to each question in order for it to be reusable.
+
+[tbl_exam] mods
+- Exam coordinator / contributor
+- Creator can tag other instructors as contributor to the created exam.
+
+~ Field mods
+-> Creator 				- ID of Creator
+-> Contributors			- ID(s) of contributors. Separated by semicolon.
+
+
+[Mailer Logic]
+On System Generated Messages Regarding Exam Submission.
+- Identify subjects that are being handled by 3 or more instructors and recommend as Departmental Exam.
+Example:
+
+<Mail Content containing deadline. etc.>
+
+The following subjects are recommended to conduct departmental Examinations:
+ELECL1C - General Program Elective 2 w/ Laboratory 1	[ Amiscosa, Cortez, Porto ]
+ITFL01G - IT Fundamentals				[ Matel, Peren, Cortez, Aquines ]
+ELFRN3C - General Elective 2 (Advanced Web)		[ Amiscosa, Dy, Doctor ]
+
+Should you have any concerns regarding the departmental examinations, please send an email to {{ College::chairperson()->Email }}.
+
+
+- This is a system generated mail. Do not reply. -

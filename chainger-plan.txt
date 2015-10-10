@@ -1,0 +1,43 @@
+CHAINGER FEATURES
+
+pre-phases
+
+email Registration for notification when the site is Live
+
+Phase 1
+
+registration
+login
+listing of suppliers
+suppliers profile with products (up to 4 products)
+
+Phase 2
+
+an account of SUPPLIER can now also be use as a CONSUMER
+		
+		RESERVATION: the supplier can now open for registration
+
+			- reservation will now be included
+			- si supplier pwede na rin mag lagay ng duration for reservation.
+			  for example: 
+
+			  a supply of pork is reserved for consumer X but needs confirmation from JUNE 5 - JUNE 8
+			  if the consumer did not update for reservation the reservation will be void
+
+			- waiting list reservation : 
+
+				habang naka reserve ang isang supply sa isang specific consumer pwede maging waiting list ung ibang consumer na pwede makuha ang reservation for supplies kapag hindi nag update ng reservation ang isang consumer
+
+
+			- SUKI system / regular customer system:
+
+				meron nang part sa chainger na list ng regular customers
+				then kapag may update sa supplies or nag post ka ng bagong supplies makikita nila
+				kagad. 
+
+
+
+
+
+
+
